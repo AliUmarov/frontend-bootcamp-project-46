@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 import _ from 'lodash';
+import parse from './parsers/index.js';
 
 const calculation = (file1, file2) => {
   const result = [];
@@ -30,8 +31,14 @@ const calculation = (file1, file2) => {
   return `{\n${result.join('\n')}\n}`;
 };
 
+const getExtension = (file) => (path.extname(file));
+
 export default (file1, file2) => {
-  const data1 = JSON.parse(readFileSync(path.resolve(file1), 'utf-8'));
-  const data2 = JSON.parse(readFileSync(path.resolve(file2), 'utf-8'));
+  const object1 = readFileSync(path.resolve(process.cwd(), file1), 'utf-8');
+  const object2 = readFileSync(path.resolve(process.cwd(), file2), 'utf-8');
+  const extensionOfObj1 = getExtension(file1);
+  const extensionOfObj2 = getExtension(file2);
+  const data1 = parse(object1, extensionOfObj1);
+  const data2 = parse(object2, extensionOfObj2);
   return calculation(data1, data2);
 };
